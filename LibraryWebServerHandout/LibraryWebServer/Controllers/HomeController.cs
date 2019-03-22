@@ -91,37 +91,49 @@ namespace LibraryWebServer.Controllers
       List<Object> items = new List<Object>(); 
       using (Team23LibraryContext db = new Team23LibraryContext())
       {
-         // look into best way to do this. multiple queires? rawish sql? change Teasm23LibraryContext.cs?
-         // read/research before writing anything!
-         var query = from t in db.Titles
-                    join i in db.Inventory on t.Isbn equals i.Isbn into IJT
-                    from ijt in IJT
+                // look into best way to do this. multiple queires? rawish sql? change Teasm23LibraryContext.cs?
+                // read/research before writing anything!
+                var query = from t in db.Titles
+                           join i in db.Inventory on t.Isbn equals i.Isbn into IJT
+                           from ijt in IJT
 
-                    select new { isbn = t.Isbn, title = t.Title, author = t.Author, serial = ijt.Serial };
+                           select new { isbn = t.Isbn, title = t.Title, author = t.Author, serial = ijt.Serial };
 
-         /*
-         var query = from t in db.Titles
-                     join i in db.Inventory on t.Isbn equals i.Isbn into IJT
-                     from ijt in IJT
-                     join c in db.CheckedOut on ijt.Serial equals c.Serial into IJTJC
-                     from ijtjc in IJTJC
-                     join p in db.Patrons on ijtjc.CardNum equals p.CardNum into IJTJCJP
-                     from ijtjcjp in IJTJCJP
+               foreach (var v in query)
+               {
+                 
+                 Object next_item = new {v.isbn, v.title, v.author, v.serial};
+                 System.Diagnostics.Debug.WriteLine("===== ====="); 
+                 System.Diagnostics.Debug.WriteLine(next_item.ToString());
+                 System.Diagnostics.Debug.WriteLine("===== =====");
+                 items.Add(next_item);
+               }     
+               
 
-                    select new { isbn = t.Isbn, title = t.Title, author = t.Author };
-         */
+                /* Why is j2.Name not working?!?!?!
+                 * 
+                var query = from t in db.Titles
+                            join i in db.Inventory on t.Isbn equals i.Isbn into join1
+                            from j1 in join1
 
+                            from p in db.Patrons
+                            join c in db.CheckedOut on p.CardNum equals c.CardNum into join2
+                            from j2 in join2.DefaultIfEmpty()
 
-        foreach (var v in query)
-        {
-          //
-          Object next_item = new {v.isbn, v.title, v.author, v.serial};
-          System.Diagnostics.Debug.WriteLine("===== ====="); 
-          System.Diagnostics.Debug.WriteLine(next_item.ToString());
-          System.Diagnostics.Debug.WriteLine("===== =====");
-          items.Add(next_item);
-        }
-      }
+                            select new { isbn = t.Isbn, title = t.Title, author = t.Author, serial = j1.Serial, j2.Name };
+
+                foreach (var v in query)
+                {
+                    //
+                    Object next_item = new { v.isbn, v.title, v.author, v.serial, v.name };
+                    System.Diagnostics.Debug.WriteLine("===== =====");
+                    System.Diagnostics.Debug.WriteLine(next_item.ToString());
+                    System.Diagnostics.Debug.WriteLine("===== =====");
+                    items.Add(next_item);
+                }
+                */
+                 
+            }
       return Json(items.ToArray());
     }
 
